@@ -72,7 +72,15 @@ async function connectWallet(){
 
   loadData();
   setInterval(loadData,10000);
-  listenEvents(); // ✅ activate event listeners
+
+   // ✅ only now we call it
+    listenEvents();
+
+  } catch (err) {
+    console.log("Wallet connection failed:", err);
+    alert("Failed to connect wallet. Make sure you have MetaMask installed.");
+  }
+ 
 }
 
 async function loadData(){
@@ -156,46 +164,55 @@ async function claimReward(){
 }
 
 // EVENTS
+
 function listenEvents() {
-  // Registered
-  contract.on("Registered", (userAddr, referrer) => {
-    if(userAddr.toLowerCase() === user.toLowerCase()){
-      document.getElementById("status").innerText =
-        `Registered successfully with referrer: ${referrer}`;
-      loadData();
-    }
-  });
+  if (!contract || !user) return; // ✅ only run if contract and user exist
 
-  // LevelJoined
-  contract.on("LevelJoined", (userAddr, level, amount) => {
-    if(userAddr.toLowerCase() === user.toLowerCase()){
-      document.getElementById("status").innerText =
-        `Joined Level ${level} successfully with ${human(amount)} TRC`;
-      loadData();
-    }
-  });
-
-  // RewardClaimed
-  contract.on("RewardClaimed", (userAddr, amount) => {
-    if(userAddr.toLowerCase() === user.toLowerCase()){
-      document.getElementById("status").innerText =
-        `Reward claimed: ${human(amount)} TRC`;
-      loadData();
-    }
-  });
-
-  // EMAUpdated (optional, updates chart)
-  contract.on("EMAUpdated", (price) => {
-    if(chart){
-      chart.data.labels.push(new Date().toLocaleTimeString());
-      chart.data.datasets[0].data.push(usd(price));
-      if(chart.data.labels.length>20){
-        chart.data.labels.shift();
-        chart.data.datasets[0].data.shift();
+  try {
+    // Registered event
+    contract.on("Registered", (userAddr, referrer) => {
+      if (userAddr.toLowerCase() === user.toLowerCase()) {
+        document.getElementById("status").innerText =
+          `Registered successfully with referrer: ${referrer}`;
+        loadData();
       }
-      chart.update();
-    }
-  });
+    });
+
+    // LevelJoined event
+    contract.on("LevelJoined", (userAddr, level, amount) => {
+      if (userAddr.toLowerCase() === user.toLowerCase()) {
+        document.getElementById("status").innerText =
+          `Joined Level ${level} successfully with ${human(amount)} TRC`;
+        loadData();
+      }
+    });
+
+    // RewardClaimed event
+    contract.on("RewardClaimed", (userAddr, amount) => {
+      if (userAddr.toLowerCase() === user.toLowerCase()) {
+        document.getElementById("status").innerText =
+          `Reward claimed: ${human(amount)} TRC`;
+        loadData();
+      }
+    });
+
+    // EMAUpdated event (optional)
+    contract.on("EMAUpdated", (price) => {
+      if (chart) {
+        chart.data.labels.push(new Date().toLocaleTimeString());
+        chart.data.datasets[0].data.push(usd(price));
+        if (chart.data.labels.length > 20) {
+          chart.data.labels.shift();
+          chart.data.datasets[0].data.shift();
+        }
+        chart.update();
+      }
+    });
+
+  } catch (err) {
+    console.log("Event listener error:", err);
+  }
 }
+
 
 window.onload = initChart;
