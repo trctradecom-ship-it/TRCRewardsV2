@@ -93,3 +93,57 @@ font-weight:bold;
 grid-template-columns:1fr;
 }
 }
+
+/* ========================== TRANSACTION STATUS COLORS ========================== */
+#status a.pending {
+  background: gold;        /* Pending = yellow/gold */
+  color: #000;
+}
+
+#status a.confirmed {
+  background: green;       /* Confirmed = green */
+  color: #fff;
+}
+
+#status a.failed {
+  background: red;         /* Failed = red */
+  color: #fff;
+}
+
+#status a {
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+
+
+/* ========================== INPUT BOXES INSIDE CARD ========================== */
+.card input {
+  width: 100%;                /* full width of the card column */
+  padding: 10px 12px;         /* space inside input */
+  border-radius: 8px;         /* rounded corners */
+  border: 1px solid #444;     /* subtle border */
+  background: #111;           /* dark background inside card */
+  color: #fff;                /* white text */
+  font-size: 1rem;            /* readable text */
+  margin-top: 5px;            /* space above input */
+  box-sizing: border-box;
+}
+
+/* Focus effect for better UX */
+.card input:focus {
+  outline: none;
+  border: 1px solid gold;
+  background: #222;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .card input {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+}
