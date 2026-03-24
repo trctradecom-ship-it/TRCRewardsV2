@@ -94,30 +94,6 @@ grid-template-columns:1fr;
 }
 }
 
-/* ========================== TRANSACTION STATUS COLORS ========================== */
-#status a.pending {
-  background: gold;        /* Pending = yellow/gold */
-  color: #000;
-}
-
-#status a.confirmed {
-  background: green;       /* Confirmed = green */
-  color: #fff;
-}
-
-#status a.failed {
-  background: red;         /* Failed = red */
-  color: #fff;
-}
-
-#status a {
-  text-decoration: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  display: inline-block;
-  margin-top: 5px;
-}
-
 
 
 /* ========================== INPUT BOXES INSIDE CARD ========================== */
