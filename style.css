@@ -147,3 +147,32 @@ grid-template-columns:1fr;
     padding: 8px 10px;
   }
 }
+
+
+
+/* ========================== ALL TRANSACTION / EVENT GREEN ========================== */
+#status a,
+#status span,
+#status p {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  background: #00c853;   /* bright green */
+  color: #fff;           /* white text */
+  text-decoration: none;
+  margin-top: 5px;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+#status a:hover,
+#status span:hover,
+#status p:hover {
+  background: #00e676;   /* lighter green on hover */
+}
+
+
+
+
+
