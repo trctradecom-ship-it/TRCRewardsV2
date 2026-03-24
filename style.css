@@ -150,4 +150,8 @@ grid-template-columns:1fr;
   line-height: 1.4;
 }
 
-
+#status a,
+#status span,
+#status p {
+  background: none !important;   /* remove any leftover green box */
+}
