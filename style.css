@@ -173,6 +173,27 @@ grid-template-columns:1fr;
 }
 
 
+/* ========================== GREEN TEXT FOR EVENTS / CONFIRMATION ========================== */
+#status {
+  color: #00c853;          /* bright green text */
+  font-weight: bold;
+  font-size: 1rem;
+  line-height: 1.4;
+  word-break: break-word;   /* long text wraps inside card */
+}
 
+/* Make links inside #status green as well */
+#status a {
+  color: #00c853;          /* bright green */
+  text-decoration: none;    /* remove underline */
+  font-weight: bold;
+}
+
+/* Optional: smaller padding inside card box if needed */
+#status span, #status p {
+  color: #00c853;          /* green text */
+  font-weight: bold;
+  line-height: 1.4;
+}
 
 
