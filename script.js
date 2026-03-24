@@ -25,6 +25,11 @@ const abi = [
   "function joinLevel5()",
   "function joinLevel6()",
   "function claimReward()"
+  
+  "event Registered(address indexed user,address indexed referrer)",
+  "event LevelJoined(address indexed user,uint8 level,uint256 amount)",
+  "event RewardClaimed(address indexed user,uint256 amount)",
+  "event EMAUpdated(uint256 price)"
 ];
 
 const tokenABI = [
@@ -67,6 +72,7 @@ async function connectWallet(){
 
   loadData();
   setInterval(loadData,10000);
+  listenEvents(); // ✅ activate event listeners
 }
 
 async function loadData(){
@@ -147,6 +153,49 @@ async function joinLevel(l){
 
 async function claimReward(){
   handleTx(contract.claimReward());
+}
+
+// EVENTS
+function listenEvents() {
+  // Registered
+  contract.on("Registered", (userAddr, referrer) => {
+    if(userAddr.toLowerCase() === user.toLowerCase()){
+      document.getElementById("status").innerText =
+        `Registered successfully with referrer: ${referrer}`;
+      loadData();
+    }
+  });
+
+  // LevelJoined
+  contract.on("LevelJoined", (userAddr, level, amount) => {
+    if(userAddr.toLowerCase() === user.toLowerCase()){
+      document.getElementById("status").innerText =
+        `Joined Level ${level} successfully with ${human(amount)} TRC`;
+      loadData();
+    }
+  });
+
+  // RewardClaimed
+  contract.on("RewardClaimed", (userAddr, amount) => {
+    if(userAddr.toLowerCase() === user.toLowerCase()){
+      document.getElementById("status").innerText =
+        `Reward claimed: ${human(amount)} TRC`;
+      loadData();
+    }
+  });
+
+  // EMAUpdated (optional, updates chart)
+  contract.on("EMAUpdated", (price) => {
+    if(chart){
+      chart.data.labels.push(new Date().toLocaleTimeString());
+      chart.data.datasets[0].data.push(usd(price));
+      if(chart.data.labels.length>20){
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+      }
+      chart.update();
+    }
+  });
 }
 
 window.onload = initChart;
