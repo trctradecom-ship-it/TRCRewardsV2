@@ -191,12 +191,28 @@ function startTimers(){
 // ========================== HANDLE TRANSACTIONS ==========================
 async function handleTx(tx){
   try{
-    const sent = await tx;
+    // ⏳ waiting wallet confirm
     document.getElementById("status").innerHTML =
-      `<a href="https://polygonscan.com/tx/${sent.hash}" target="_blank">Transaction Pending...</a>`;
+      `<span class="tx-pending">⏳ Waiting for confirmation...</span>`;
+
+    const sent = await tx;
+
+    // 🔄 pending with polygonscan link
+    document.getElementById("status").innerHTML =
+      `<a href="https://polygonscan.com/tx/${sent.hash}" target="_blank">
+        🔄 Transaction Pending (View)
+      </a>`;
+
+    // ⏱ wait for blockchain confirmation
     await sent.wait();
+
+    // ✅ after confirmed (EVENT WILL UPDATE AFTER THIS)
+    document.getElementById("status").innerHTML =
+      `<span class="tx-success">✅ Transaction Confirmed</span>`;
+
   }catch(e){
-    document.getElementById("status").innerText = "Transaction Failed";
+    document.getElementById("status").innerHTML =
+      `<span class="tx-fail">❌ Transaction Failed</span>`;
   }
 }
 
