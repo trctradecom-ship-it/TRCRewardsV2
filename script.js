@@ -294,17 +294,17 @@ window.onload = initChart;
 // ========================== REWARD CALCULATOR ==========================
 function calculateReward(){
 
-  // ✅ Auto fill from dashboard
+  // Auto fill from dashboard
   document.getElementById("calcBaseWeight").value =
     document.getElementById("baseWeight").innerText;
 
   document.getElementById("calcTempWeight").value =
     document.getElementById("tempWeight").innerText;
 
+  // ✅ FIXED HERE (use totalWeight instead of epochWeight)
   document.getElementById("calcTotalWeight").value =
-    document.getElementById("epochWeight").innerText;
+    document.getElementById("totalWeight").innerText;
 
-  // ✅ Optional auto pool fill
   document.getElementById("pool").value =
     document.getElementById("rewardPool").innerText;
 
@@ -315,20 +315,15 @@ function calculateReward(){
 
   let userWeight = base + temp;
 
-  if(isNaN(pool) || isNaN(total)){
-    document.getElementById("rewardResult").innerText = "Enter required values";
-    return;
-  }
-
   if(total === 0){
-    document.getElementById("rewardResult").innerText = "Total weight cannot be 0";
+    document.getElementById("rewardResult").innerHTML =
+      "⚠️ No participants yet";
     return;
   }
 
   let reward = (pool * userWeight) / total;
 
   document.getElementById("rewardResult").innerHTML =
-    `Estimated Reward: ${reward.toFixed(4)} TRC 
-     <br><small>Final reward may change until epoch ends</small>`;
+    `Estimated Reward: ${reward.toFixed(4)} TRC`;
 }
 
