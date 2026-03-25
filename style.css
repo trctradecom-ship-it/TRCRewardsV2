@@ -155,3 +155,62 @@ grid-template-columns:1fr;
 #status p {
   background: none !important;   /* remove any leftover green box */
 }
+
+/* ================= CALCULATOR - 2 ROW LAPTOP ================= */
+
+.calculator-card {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* 2 columns → 2 rows (4 inputs total) */
+.calculator-card .grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+/* Labels */
+.calculator-card label {
+  font-size: 14px;
+  color: #cbd5f5;
+}
+
+/* Inputs */
+.calculator-card input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-size: 14px;
+}
+
+/* Button */
+.calculator-card button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #22c55e;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.calculator-card button:hover {
+  background: #16a34a;
+}
+
+/* Result */
+#rewardResult {
+  margin-top: 15px;
+  font-size: 16px;
+  text-align: center;
+  color: #38bdf8;
+}
+
