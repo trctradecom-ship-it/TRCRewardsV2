@@ -289,3 +289,46 @@ function listenEvents() {
 
 // ========================== INITIALIZE ==========================
 window.onload = initChart;
+
+
+// ========================== REWARD CALCULATOR ==========================
+function calculateReward(){
+
+  // ✅ Auto fill from dashboard
+  document.getElementById("calcBaseWeight").value =
+    document.getElementById("baseWeight").innerText;
+
+  document.getElementById("calcTempWeight").value =
+    document.getElementById("tempWeight").innerText;
+
+  document.getElementById("calcTotalWeight").value =
+    document.getElementById("epochWeight").innerText;
+
+  // ✅ Optional auto pool fill
+  document.getElementById("pool").value =
+    document.getElementById("rewardPool").innerText;
+
+  let pool = parseFloat(document.getElementById("pool").value);
+  let base = parseFloat(document.getElementById("calcBaseWeight").value) || 0;
+  let temp = parseFloat(document.getElementById("calcTempWeight").value) || 0;
+  let total = parseFloat(document.getElementById("calcTotalWeight").value);
+
+  let userWeight = base + temp;
+
+  if(isNaN(pool) || isNaN(total)){
+    document.getElementById("rewardResult").innerText = "Enter required values";
+    return;
+  }
+
+  if(total === 0){
+    document.getElementById("rewardResult").innerText = "Total weight cannot be 0";
+    return;
+  }
+
+  let reward = (pool * userWeight) / total;
+
+  document.getElementById("rewardResult").innerHTML =
+    `Estimated Reward: ${reward.toFixed(4)} TRC 
+     <br><small>Final reward may change until epoch ends</small>`;
+}
+
