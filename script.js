@@ -6,6 +6,10 @@ let token;
 let user;
 let chart;
 
+// ✅ NEW (epoch)
+let epochStartFromContract = 0;
+const EPOCH_DURATION = 7 * 24 * 60 * 60;
+
 // ========================== CONTRACT ADDRESSES ==========================
 const contractAddress = "0x47e8BDfA9682fDC2E04B58f9a69673c116fDa404";
 const tokenAddress = "0xc08983be707bf4b763e7A0f3cCAD3fd00af6620d";
@@ -13,6 +17,7 @@ const tokenAddress = "0xc08983be707bf4b763e7A0f3cCAD3fd00af6620d";
 // ========================== ABI ==========================
 const abi = [
   "function currentEpoch() view returns(uint256)",
+  "function epochStart() view returns(uint256)", // ✅ ADDED
   "function downlineCount(address) view returns(uint256)",
   "function epochTotalWeight() view returns(uint256)",
   "function pendingReward(address) view returns(uint256)",
@@ -29,7 +34,6 @@ const abi = [
   "function joinLevel6()",
   "function claimReward()",
 
-  // ✅ Events
   "event Registered(address indexed user,address indexed referrer)",
   "event LevelJoined(address indexed user,uint8 level,uint256 amount)",
   "event RewardClaimed(address indexed user,uint256 amount)",
@@ -49,6 +53,11 @@ function usd(v){
   return Number(ethers.utils.formatUnits(v,18)).toFixed(4);
 }
 
+// ✅ NEW
+function formatTime(ts){
+  return new Date(ts * 1000).toLocaleString();
+}
+
 // ========================== CHART ==========================
 function initChart(){
   const ctx = document.getElementById("priceChart").getContext("2d");
@@ -64,10 +73,7 @@ function initChart(){
         backgroundColor: "rgba(0,0,255,0.1)"
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
+    options:{ responsive:true, maintainAspectRatio:false }
   });
 }
 
@@ -75,7 +81,7 @@ function initChart(){
 async function connectWallet() {
   try {
     if (!window.ethereum) {
-      alert("MetaMask not found! Please install MetaMask.");
+      alert("MetaMask not found!");
       return;
     }
 
@@ -93,12 +99,11 @@ async function connectWallet() {
     loadData();
     setInterval(loadData, 10000);
 
-    // ✅ Start listening to events AFTER wallet is connected
+    startTimers(); // ✅ ADDED
     listenEvents();
 
   } catch (err) {
-    console.log("Wallet connection failed:", err);
-    alert("Failed to connect wallet. Make sure you have MetaMask installed.");
+    console.log(err);
   }
 }
 
@@ -130,9 +135,57 @@ async function loadData(){
     document.getElementById("tempWeight").innerText = u[3];
     document.getElementById("totalWeight").innerText = await contract.totalWeight();
 
+    // ✅ FETCH EPOCH START
+    if(epochStartFromContract === 0){
+      epochStartFromContract = Number(await contract.epochStart());
+      document.getElementById("epochStart").innerText = formatTime(epochStartFromContract);
+    }
+
+    // ✅ NEXT EPOCH
+    if(epochStartFromContract > 0){
+      let now = Math.floor(Date.now()/1000);
+      let epochNumber = Math.floor((now - epochStartFromContract)/EPOCH_DURATION);
+      if(epochNumber < 0) epochNumber = 0;
+
+      let nextEpoch = epochStartFromContract + ((epochNumber+1)*EPOCH_DURATION);
+      document.getElementById("nextEpoch").innerText = formatTime(nextEpoch);
+    }
+
   }catch(e){
     console.log(e);
   }
+}
+
+// ========================== TIMER ==========================
+function startTimers(){
+  setInterval(()=>{
+
+    if(epochStartFromContract === 0) return;
+
+    let now = Math.floor(Date.now()/1000);
+
+    let epochNumber = Math.floor((now - epochStartFromContract)/EPOCH_DURATION);
+    if(epochNumber < 0) epochNumber = 0;
+
+    let nextEpoch = epochStartFromContract + ((epochNumber+1)*EPOCH_DURATION);
+
+    let remaining = nextEpoch - now;
+    if(remaining < 0) remaining = 0;
+
+    let d = Math.floor(remaining/86400);
+    remaining %= 86400;
+    let h = Math.floor(remaining/3600);
+    remaining %= 3600;
+    let m = Math.floor(remaining/60);
+    let s = remaining % 60;
+
+    document.getElementById("epochTimer").innerText =
+      `${d}d ${h}h ${m}m ${s}s`;
+
+    document.getElementById("claimTimer").innerText =
+      `${d}d ${h}h ${m}m ${s}s`;
+
+  },1000);
 }
 
 // ========================== HANDLE TRANSACTIONS ==========================
@@ -142,7 +195,6 @@ async function handleTx(tx){
     document.getElementById("status").innerHTML =
       `<a href="https://polygonscan.com/tx/${sent.hash}" target="_blank">Transaction Pending...</a>`;
     await sent.wait();
-    // ✅ After confirmation, loadData() is automatically updated via events
   }catch(e){
     document.getElementById("status").innerText = "Transaction Failed";
   }
@@ -215,7 +267,7 @@ function listenEvents() {
     });
 
   } catch (err) {
-    console.log("Event listener error:", err);
+    console.log(err);
   }
 }
 
