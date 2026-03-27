@@ -131,6 +131,16 @@ async function loadData(){
 
     const u = await contract.users(user);
     document.getElementById("level").innerText = u[1];
+
+    // ✅ ADDED REFERRER LOGIC
+    let ref = u[0];
+    if(ref === "0x0000000000000000000000000000000000000000"){
+      document.getElementById("referrer").innerText = "No Referrer";
+    }else{
+      document.getElementById("referrer").innerText =
+        ref.slice(0,6) + "..." + ref.slice(-6);
+    }
+
     document.getElementById("baseWeight").innerText = u[2];
     document.getElementById("tempWeight").innerText = u[3];
     document.getElementById("totalWeight").innerText = await contract.totalWeight();
@@ -203,7 +213,6 @@ async function handleTx(tx){
         🔄 Transaction Pending (View)
       </a>`;
 
-    // ⏱ wait for blockchain confirmation
     await sent.wait();
 
     // ✅ after confirmed (EVENT WILL UPDATE AFTER THIS)
@@ -290,11 +299,11 @@ function listenEvents() {
 // ========================== INITIALIZE ==========================
 window.onload = initChart;
 
-
 // ========================== REWARD CALCULATOR ==========================
 function calculateReward(){
-
+  
   // Auto fill from dashboard
+
   document.getElementById("calcBaseWeight").value =
     document.getElementById("baseWeight").innerText;
 
@@ -302,6 +311,7 @@ function calculateReward(){
     document.getElementById("tempWeight").innerText;
 
   // ✅ FIXED HERE (use totalWeight instead of epochWeight)
+
   document.getElementById("calcTotalWeight").value =
     document.getElementById("totalWeight").innerText;
 
@@ -326,4 +336,3 @@ function calculateReward(){
   document.getElementById("rewardResult").innerHTML =
     `Estimated Reward: ${reward.toFixed(4)} TRC`;
 }
-
