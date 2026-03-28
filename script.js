@@ -97,7 +97,7 @@ async function connectWallet() {
     token = new ethers.Contract(tokenAddress, tokenABI, signer);
 
     loadData();
-    setInterval(loadData, 5 * 60 * 1000); // 5 minutes 
+    
 
     startTimers(); // ✅ ADDED
     listenEvents();
